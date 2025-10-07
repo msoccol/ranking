@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>CMOrSM 2025 - Ranking Parcial</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f8f9fa;
+    }
+    h1 {
+      text-align: center;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      background: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #007BFF;
+      color: white;
+      font-size: 13px;
+      padding: 6px;
+      border: 1px solid #ddd;
+      text-align: left;
+      z-index: 2;
+    }
+    tbody td {
+      border: 1px solid #ddd;
+      padding: 6px;
+      font-size: 13px;
+	  text-align: center;
+    }
+    tr.category-header {
+      background: #e9ecef;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    tr.hidden {
+      display: none;
+    }
+    .pos {
+      text-align: center;
+      font-weight: bold;
+    }
+    th.sortable {
+      cursor: pointer;
+      user-select: none;
+	  background-color: yellow;
+	  color: black;
+    }
+    th.sortable span.arrow {
+      margin-left: 4px;
+      font-size: 11px;
+	  
+    }
+    td.descarte {
+      color: rgba(0,0,0,0.5);
+      text-align: center;
+    }
+	td.nome {
+      text-align: left;
+    }
+  </style>
+</head>
+<body>
+  <h1>CMOrSM 2025 - Ranking Parcial</h1>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Pos</th>
+        <th>Atleta</th>
+        <th style = "text-align:center">CBO</th>
+        <th style = "text-align:center">Clube</th>
+        <th>Perc 1</th>
+        <th>Perc 2</th>
+        <th>Perc 3</th>
+        <th>Perc 4</th>
+        <th class="sortable" data-key="Total">Total<span class="arrow">▼</span></th>
+        <th class="descarte">Desc 1</th>
+        <th class="sortable" data-key="Total1">Total 1<span class="arrow"></span></th>
+        <th class="descarte">Desc 2</th>
+        <th class="sortable" data-key="Total2">Total 2<span class="arrow"></span></th>
+      </tr>
+    </thead>
+    <tbody id="tableBody"></tbody>
+  </table>
+
+  <script>
+    const data = [
+["D Senior N","Leandra Medeiros Spezzapria","22293","COSM","40","40","40","40","160","40","120","40","80"],
+["H Master N","Volnei Roberto Debus","116973","ROTA 405","","40","","","40","0","40","0","40"],
+["H Master N","Elvio Dias Da Rosa","67014","COSM","0","37","","","37","0","37","0","37"],
+["D Adulto N","Catiane Dias Da Rosa","68006","COSM","40","40","","","80","0","80","0","80"],
+["D Adulto N","Bruna Araujo Franco","20232","COSC","37","0","","","37","0","37","0","37"],
+["H Adulto N","Tailan Oliveira Rosa","25017","COSM","40","40","0","40","120","0","120","40","80"],
+["H Adulto N","Marciel Junior Da Cunha Mendes","30031","COSM","","","37","37","74","0","74","0","74"],
+["H Adulto N","Érick Kettermann Garcia","30032","COSM","","","40","0","40","0","40","0","40"],
+["D Juv N","Gabriele Carvalho Silva","68014","COSM","40","0","37","40","117","0","117","37","80"],
+["D Juv N","Luiza Borba Da Silva","22390","COSM","37","0","40","35","112","0","112","35","77"],
+["D Juv N","Maria Eduarda Menegassi Silva","23435","COSM","","","35","37","72","0","72","0","72"],
+["D Juv N","Stephani Murussi Frizon Almeida","23427","COSM","","","33","33","66","0","66","0","66"],
+["H Juv N","Arthur Luis Sotero Dornelles","22372","COSM","35","40","32","40","147","32","115","35","80"],
+["H Juv N","Bernardo Pairé Da Rocha Soares","68005","COSM","40","37","35","32","144","32","112","35","77"],
+["H Juv N","Matheus Sanches Soares Da Silva","22366","COSM","37","35","33","35","140","33","107","35","72"],
+["H Juv N","Ysmael Dos Santos Saraiva","68030","COSM","33","33","40","0","106","0","106","33","73"],
+["H Juv N","Miguel Portella Braga Fogaça","23426","COSM","","","37","37","74","0","74","0","74"],
+["H Juv N","Davi Miller Porto","116977","COSM","","","","33","33","0","33","0","33"],
+["H Juv N","Christian Mickael Dos Santos Saraiva","66019","COSM","","0","","","0","0","0","0","0"],
+["D Inf N","Livia Procópio Rosa","25018","COSM","40","40","40","37","157","37","120","40","80"],
+["D Inf N","Alice Cezar Alves","60025","COSM","","37","","40","77","0","77","0","77"],
+["D Inf N","Julia De Souza Ramires","68019","COSM","0","","","","0","0","0","0","0"],
+["H Inf N","Theo Mendonça Fioravanti","19773","COSM","40","40","33","35","148","33","115","35","80"],
+["H Inf N","Igor Moreira Fonseca","68015","COSM","33","33","35","37","138","33","105","33","72"],
+["H Inf N","Alisson Martins Dos Santos","68003","COSM","35","35","37","0","107","0","107","35","72"],
+["H Inf N","Mathias Saccol Rizzatti","22612","COSM","31","37","","32","100","0","100","31","69"],
+["H Inf N","Felipe Daniel Buriol","30012","COSM","","","40","40","80","0","80","0","80"],
+["H Inf N","Lucas Sanches Soares Da Silva","22359","COSM","37","32","","","69","0","69","0","69"],
+["H Inf N","Pedro Caetano Castro Alves","25020","Indiv.","32","","","","32","0","32","0","32"],
+["H Inf N","Jonatas Da Roza Belisario Da Silva","68017","COSM","","31","","","31","0","31","0","31"],
+["D21E","Ana Paula Koeche","19098","COSM","35","37","40","40","152","35","117","37","80"],
+["D21E","Elaine Dalmares Lenz","7987","COSM","37","35","37","37","146","35","111","37","74"],
+["D21E","Luiza Eduarda Wachtmann Rizzatti","22593","COSM","33","31","35","33","132","31","101","33","68"],
+["D21E","Juliane Valéria de Carvalho Mendonça","2734","COSM","40","32","","35","107","0","107","32","75"],
+["D21E","Nelci De Souza Dias","18352","COSM","32","33","","32","97","0","97","32","65"],
+["D21E","Mirian Pasturiza","1415","COSM","","40","","","40","0","40","0","40"],
+["H21E","Cleber Baratto Vidal","1315","COSM","40","40","40","40","160","40","120","40","80"],
+["H21E","Larri Gabriel Hermes Lemes","15263","COSM","37","37","37","33","144","33","111","37","74"],
+["H21E","Jussie Pettine Santos","10685","COSM","35","29","35","37","136","29","107","35","72"],
+["H21E","Gean Carlos Soares Da Silveira","15254","COSM","31","35","33","35","134","31","103","33","70"],
+["H21E","Everton Santos da Silva","2806","COSM","33","33","32","32","130","32","98","32","66"],
+["H21E","Matheus Moreira da Silva","14075","COSM","30","32","31","37","130","30","100","31","69"],
+["H21E","Junior Lizzi","20861","COSM","0","30","30","35","95","0","95","30","65"],
+["H21E","Lucas Do Rego Bertin","20214","COSM","32","31","","","63","0","63","0","63"],
+["H18E","Matheus Muraro Machado","22379","COSM","40","0","40","40","120","0","120","40","80"],
+["H65A","Sérgio Augusto Naimaier Vargas","4935","COSC","40","","40","40","120","0","120","40","80"],
+["H60A","Alvaro Valdemar Ney Machado","233","COSC","37","40","37","35","149","35","114","37","77"],
+["H60A","Elvandir de Vargas","8","COSC","40","37","33","33","143","33","110","33","77"],
+["H60A","José Nilton Silva Vargas","38","COSM","35","35","31","32","133","31","102","32","70"],
+["H60A","Paulo Calisto Becker","899","COSM","","","40","40","80","0","80","0","80"],
+["H60A","Fernando Ferreira Elesbão","20822","COSM","0","","35","37","72","0","72","0","72"],
+["H60A","Francisco Das Chagas Ricardo Fonseca","16110","COSM","0","","32","","32","0","32","0","32"],
+["H55A","Araci Acemar Trindade Cavalheiro","1612","COSM","37","37","40","40","154","37","117","37","80"],
+["H55A","Paulo Moacir Castro Dorneles","17261","COSM","35","35","35","37","142","35","107","35","72"],
+["H55A","Jocemar Riva","341","COS","40","40","","","80","0","80","0","80"],
+["H55A","Eraldo Otto Hoppen","30010","COSM","","","37","","37","0","37","0","37"],
+["D50A","Vanessa Tassinari Ragazzon","2240","ROTA 405","40","40","40","40","160","40","120","40","80"],
+["H50A","Valmor Niedermayer","33","COSC","40","40","40","37","157","37","120","40","80"],
+["H50A","Vitor Ribeiro Dias","627","COSM","35","35","37","40","147","35","112","35","77"],
+["H50A","Marcelo Viero Bianchin","306","COS","37","37","35","35","144","35","109","35","74"],
+["H50A","Marco Antônio Pedroso Da Rosa","7741","BAVECO","","","33","33","66","0","66","0","66"],
+["H50A","Luís Giovani Severo Schreiner","6195","COSM","","33","","","33","0","33","0","33"],
+["H50A","Marco Aurélio Pedroso Da Rosa","17519","BAVECO","","","32","","32","0","32","0","32"],
+["H45A","Giuliano Ragazzon","17923","ROTA 405","37","40","37","37","151","37","114","37","77"],
+["H45A","Eldemar Luccas","1143","COSC","","","40","40","80","0","80","0","80"],
+["H45A","Cristiano Uberti Anselva","400122","COSM","40","","","","40","0","40","0","40"],
+["H45A","Rafael Correa Veloso Sobrinho","40","COSM","0","","","","0","0","0","0","0"],
+["D40A","Ana Cecilia Guedes Pereira Falcão","4297","COSM","0","0","","","0","0","0","0","0"],
+["H40A","Rafael De Oliveira Jaques Jardim","14543","COSC","40","40","40","0","120","0","120","40","80"],
+["H40A","Rafael Grenzel","20487","ADCH","","","37","40","77","0","77","0","77"],
+["H40A","Fabio Fassini","8552","Indiv.","37","37","","","74","0","74","0","74"],
+["H40A","Ricardo Morand Goes","20967","Indiv.","0","0","","","0","0","0","0","0"],
+["H35A","Leon Munhoz Da Rosa","7883","COSM","37","37","40","40","154","37","117","37","80"],
+["H35A","Vanderlei José Bortoli","1860","COSM","40","40","","","80","0","80","0","80"],
+["H35A","Lucas Pereira","20888","Indiv.","0","35","","","35","0","35","0","35"],
+["D21A","Patrícia Santana Mathias","7535","COSM","0","40","","","40","0","40","0","40"],
+["D21A","Luíse Rodrigues Domingues","23251","COSM","0","0","","","0","0","0","0","0"],
+["H21A","Arthur Coimbra de Souza Braga","13829","COSM","33","35","35","37","140","33","107","35","72"],
+["H21A","Bruno Oliveira Rizzatti","1279","COSM","35","33","37","32","137","32","105","33","72"],
+["H21A","Mauricio Pivotto Viera","13830","COSM","37","0","40","33","110","0","110","33","77"],
+["H21A","Rafael Gomes De Oliveira","10742","COSM","0","37","33","35","105","0","105","33","72"],
+["H21A","Luís Carlos Chagas","4973","COSM","32","32","0","31","95","0","95","31","64"],
+["H21A","Plauto De Moura Alves","23336","COSM","31","30","","30","91","0","91","30","61"],
+["H21A","Vinicius Matté","22749","COSM","40","","","40","80","0","80","0","80"],
+["H21A","Rafael Ressel Flores","7310","COSM","30","40","","","70","0","70","0","70"],
+["H21A","Luciano Silva de Bastos","10803","COSM","29","31","","","60","0","60","0","60"],
+["H21A","Robson Comazzetto Belinazzo","16411","COSM","0","0","31","29","60","0","60","0","60"],
+["H21A","Leonardo Ruiz Forgiarini","22309","COSM","","","32","0","32","0","32","0","32"],
+["H21A","Jeferson Lopes Eugenio","21951","Indiv.","0","29","","","29","0","29","0","29"],
+["H21A","Pedro Henrique Nicoloso Bilhalva","22394","COSM","28","","","","28","0","28","0","28"],
+["H21A","Diogo Cavalcante Lopes","20229","COAN","0","0","","","0","0","0","0","0"],
+["H21A","Michel Matias Machado","18489","COS","0","","","","0","0","0","0","0"],
+["D20A","Ana Clara Garske Lopes","9341","COSM","0","40","40","40","120","0","120","40","80"],
+["H18A","Erick Dias Knorst","22386","COSM","37","37","40","40","154","37","117","37","80"],
+["H18A","Leonardo Ruiz Forgiarini","22309","COSM","40","40","","","80","0","80","0","80"],
+["D16A","Isadora Silveira Knecht","22852","COSM","40","35","35","37","147","35","112","35","77"],
+["D16A","Valentina Couto Henriques","23078","COSM","33","33","37","35","138","33","105","33","72"],
+["D16A","Ludimila Carvalho Silva","22395","COSM","","","40","40","80","0","80","0","80"],
+["D16A","Priscila Guimaraes Spitzmacher De Almeida","22378","COSM","35","40","","","75","0","75","0","75"],
+["D16A","Diovana Guimarães Spitzmacher De Almeida","22375","COSM","37","37","","","74","0","74","0","74"],
+["H16A","Dawison Pacheco De Farias","20322","COSM","","","40","40","80","0","80","0","80"],
+["H16A","Tiago Tayan Rolim Pazatto","22381","COSM","","","35","37","72","0","72","0","72"],
+["H16A","Ariel Dos Santos Correia","30005","COSM","","","37","","37","0","37","0","37"],
+["H14A","Lorenzo Manfio Engelmann","23044","COSM","40","37","40","40","157","37","120","40","80"],
+["H14A","Valentin Gindri De Oliveira","23058","COSM","37","40","37","37","151","37","114","37","77"],
+["H14A","Kevyn Ryan Borba Squarcieri","22368","COSM","35","35","35","33","138","33","105","35","70"],
+["H14A","Guilherme Guimarães Lucero","23050","COSM","","","33","35","68","0","68","0","68"],
+["D50B","Teresinha Idenes Balbom Cogo","288","COSM","","40","40","","80","0","80","0","80"],
+["H50B","Marco Aurélio Pedroso Da Rosa","17519","BAVECO","40","40","","","80","0","80","0","80"],
+["H50B","Darci Dorneles Lopes","89","COSM","37","37","","","74","0","74","0","74"],
+["H50B","Lisandro Nascimento De Melo","15294","COSM","","","","40","40","0","40","0","40"],
+["H45B","Alessandro Fagundes De Souza","21679","COSM","40","40","40","40","160","40","120","40","80"],
+["H45B","Renato Silva Costa","20397","COSM","37","37","37","","111","0","111","37","74"],
+["D40B","Luceli Nascimento De Brito","20042","ROTA 405","40","40","","","80","0","80","0","80"],
+["H40B","Rafael Joaquim Maia","22917","COSM","","40","40","40","120","0","120","40","80"],
+["H40B","Carlos Marcel Cunha","23368","COSM","","0","","","0","0","0","0","0"],
+["D35B","Daniela Chaves Fontoura Jardim","16723","COSC","40","","","0","40","0","40","0","40"],
+["H35B","Milton Oliveira Vieira","14323","COS","","","40","40","80","0","80","0","80"],
+["H21B","Javã Rodrigues De Sousa","23324","COSM","40","40","40","40","160","40","120","40","80"],
+["H21B","Samuel Dos Santos Correia","22393","COSM","33","35","35","35","138","33","105","35","70"],
+["H21B","Jardel Da Silva","14394","COSM","37","","37","37","111","0","111","37","74"],
+["H21B","Denilson Roseno Nunes Dos Santos","18404","COSC","35","37","","","72","0","72","0","72"],
+["H21B","Rodrigo Halberstadt De Oliveira","9261","COSM","","","","33","33","0","33","0","33"],
+["D18B","Camila Mutschal Bianchin","22588","COS","40","40","40","40","160","40","120","40","80"],
+["D18B","Helena Ritter Rebelato","21735","COSM","37","37","37","37","148","37","111","37","74"],
+["H18B","Kaio Laureano Ramos Ramos","21199","COMIB","40","40","","40","120","0","120","40","80"],
+["D16B","Larissa Scheffer Cantarelli","23164","COSM","37","33","40","40","150","33","117","37","80"],
+["D16B","Manuela Cardoso Da Rosa","23144","COSM","40","37","37","35","149","35","114","37","77"],
+["D16B","Clara Stangherlin Anselva","21070","COSM","35","40","33","33","141","33","108","33","75"],
+["D16B","Maria Luiza Guimarães Alves","25004","COSM","33","35","35","37","140","33","107","35","72"],
+["D16B","Helena Ilha Dos Santos","22392","COSM","32","32","32","32","128","32","96","32","64"],
+["H16B","Pietro Rolim Marafiga","25002","COSM","40","40","37","40","157","37","120","40","80"],
+["H16B","Marcelo Da Rosa Libardi","22371","COSM","37","0","35","35","107","0","107","35","72"],
+["H16B","Alexsander Santos Bitencurt","22373","COSM","0","0","40","33","73","0","73","0","73"],
+["H16B","Otávio Gabriel Ferreira De Oliveira","19277","COSM","35","37","0","","72","0","72","0","72"],
+["H16B","Lorenzo Portela Pereira","23067","COSM","","","33","37","70","0","70","0","70"],
+["H16B","Gabriel Oliveira Da Rosa","22380","COSM","33","","","","33","0","33","0","33"],
+["D14B","Bianca Trindade Chagas","20642","COSM","40","40","40","40","160","40","120","40","80"],
+["D14B","Manuela Bicca Luccas","22369","COSM","37","0","37","37","111","0","111","37","74"],
+["H14B","Lucas Balbom Cogo","23021","COSM","40","40","33","40","153","33","120","40","80"],
+["H14B","Lucas Chitolina Bortoli","21664","COSM","35","35","35","32","137","32","105","35","70"],
+["H14B","Lucas Kurkowski Paim","66048","COSM","33","37","32","35","137","32","105","33","72"],
+["H14B","Antônio Daniel Krüger","23006","COSM","37","0","37","37","111","0","111","37","74"],
+["H14B","Luidgi Rafael Polga Bordin","23059","COSM","","","40","33","73","0","73","0","73"]
+];
+    let sortKey = 'Total';
+
+    function getSortIndex(key) {
+      if (key === 'Total') return 8;
+      if (key === 'Total1') return 10;
+      if (key === 'Total2') return 12;
+    }
+
+    function groupByCategory(data) {
+      const groups = {}
+      data.forEach(row => {
+        const cat = row[0];
+        if (!groups[cat]) groups[cat] = [];
+        groups[cat].push(row);
+      });
+      return groups;
+    }
+
+    function clearArrows() {
+      document.querySelectorAll('th.sortable span.arrow').forEach(el => el.textContent = '');
+    }
+
+    function setArrow(key) {
+      clearArrows();
+      const th = document.querySelector(`th.sortable[data-key="${key}"] span.arrow`);
+      if (th) th.textContent = '▼';
+    }
+
+    function renderTable() {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      const groups = groupByCategory(data);
+
+      Object.keys(groups).forEach(cat => {
+        const headerRow = document.createElement('tr');
+        headerRow.className = 'category-header';
+        const cell = document.createElement('td');
+        cell.colSpan = 14;
+        cell.textContent = cat;
+		headerRow.appendChild(cell);
+        tbody.appendChild(headerRow);
+
+        const sortIndex = getSortIndex(sortKey);
+        groups[cat].sort((a,b) => Number(b[sortIndex]) - Number(a[sortIndex]));
+
+        groups[cat].forEach((row, idx) => {
+          const tr = document.createElement('tr');
+
+          const posTd = document.createElement('td');
+          posTd.textContent = idx + 1;
+          posTd.className = 'pos';
+          tr.appendChild(posTd);
+
+          row.forEach((val, i) => {
+			if(i == 0) return;
+            const td = document.createElement('td');
+            td.textContent = val;
+            if (i === 9 || i === 11) td.className = 'descarte'; // desc 1 e 2
+			if(i==1) td.className = 'nome';
+            tr.appendChild(td);
+          });
+
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    document.querySelectorAll('th.sortable').forEach(th => {
+      th.addEventListener('click', () => {
+        sortKey = th.getAttribute('data-key');
+        setArrow(sortKey);
+        renderTable();
+      });
+    });
+
+    setArrow(sortKey);
+    renderTable();
+  </script>
+</body>
+</html>
